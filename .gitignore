@@ -1,0 +1,8 @@
+# JSON output file
+switches_json.txt
+
+# input directory containing the raw switch mac table output
+input/
+
+# COPYRIGHT related files
+COPYRIGHT-HEADER
