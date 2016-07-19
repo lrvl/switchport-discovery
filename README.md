@@ -6,6 +6,8 @@ Switch port Discovery : Complement port information with IP,VLAN and HOSTNAME in
 * The output of the switch port information
   * Command for Arista : sh mac address-table
   * Command for Cisco  : sh fdb
+  * Command for D-Link : sh fdb
+  * Command for 3Com   : disp mac-address
   
 ## Output
 
