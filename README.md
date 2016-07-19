@@ -13,7 +13,7 @@ Switch port Discovery : Complement port information with IP,VLAN and HOSTNAME in
 
 ## Development status
 
-- [X] Handles switch brands Arista, Cisco, DLink and 3com
+- [X] Handles switch brands Arista, Cisco, D-Link and 3Com
 - [X] Match   IPv4 to MAC address
 - [X] Resolve IPv4 to Hostname
 - [X] Include VLAN information
