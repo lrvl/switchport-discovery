@@ -68,7 +68,7 @@ get_arp_table()
 
 def ip_to_hostname(ip):
 	try:
-		return socket.gethostbyaddr(ip)
+		return socket.gethostbyaddr(ip)[0]
 	except socket.herror:
 		return None,None,None
 
@@ -117,7 +117,11 @@ for line in input:
 		
 	try:
 		dict_switches[switchname][port]["ipv4"]		= dict_mac2ip[str(mac)]
-		#dict_switches[switchname][port]["hostname"]	= ip_to_hostname(dict_switches[switchname][port]["ipv4"])[0]
+		dict_switches[switchname][port]["hostname"] = []
+		for ip in dict_switches[switchname][port]["ipv4"]:
+			print ip
+			dict_switches[switchname][port]["hostname"].append(ip_to_hostname(ip))
+
 	except KeyError:
 		dict_switches[switchname][port]["ipv4"]		= "Unknown in ARP table"
 		#dict_switches[switchname][port]["hostname"]	= "Unknown"
