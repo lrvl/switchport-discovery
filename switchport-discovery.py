@@ -31,7 +31,7 @@ import os.path
 from netaddr import *
 from collections import defaultdict  # available in Python 2.5 and newer
 
-dict_switches   = defaultdict(lambda: defaultdict(str))
+dict_switches   = {}
 dict_mac2ip	= {}
 DEBUG           = False
 DEBUGDICT       = False
@@ -42,56 +42,92 @@ DEBUGDICT       = False
 if os.path.isfile("switches_json.txt"):
 	dict_switches.update(json.load(file('switches_json.txt','r')))
 
-pprint.pprint(dict_switches)
-#sys.exit()
-
 def get_arp_table():
-    with open('/proc/net/arp') as arpt:
-	for line in arpt:
-		arpraw_array	= line.split()
-		mac		= arpraw_array[3].upper()
-		ipv4		= arpraw_array[0].upper()
-		dict_mac2ip[mac]= ipv4
+	with open('complete.arp-ip') as arpt:
+		for line in arpt:
+			arpraw_array	= line.split()
+			mac		= arpraw_array[1].upper()
+			ipv4		= arpraw_array[0].upper()
+			if '.' in mac:
+				mac = mac.translate(None, '.')
+				t = ':'.join(mac[i:i+2] for i in range(0,12,2))
+				mac = t
+			
+                        # One MAC address can be used with multiple aliased interfaces,
+                        # so multiple IPv4 addresses can be assigned on our table
+			if mac in dict_mac2ip:
+				dict_mac2ip[mac].append(ipv4)
+			else:
+			# At first we just add the IPv4 address as Array
+				dict_mac2ip[mac] = [ipv4]
 
 get_arp_table()
+
+#pprint.pprint(dict_mac2ip)
+#sys.exit()
+
+def ip_to_hostname(ip):
+	try:
+		return socket.gethostbyaddr(ip)
+	except socket.herror:
+		return None,None,None
 
 if DEBUG:
 	pprint.pprint(dict_mac2ip)
 	print dict_mac2ip['00:1C:73:0F:78:A1']
 	print dict_mac2ip['BC:F6:85:03:EA:5E']
 
+if len(sys.argv) < 2:
+	sys.exit('Usage: %s <switchvendor-switchname>' % sys.argv[0])
+
 if len(sys.argv) > 1:
         switchname     = sys.argv[1]
+
 
 input = sys.stdin
 for line in input:
         line			= line.strip()
+	print line
         swrawinput_array	= line.split(' ',-1)
 
 	# normalize MAC address input to IEEE EUI (Extended Unique Identifier)
 	mac			= str(EUI(str(swrawinput_array[1]))).replace("-",':')
-#        print mac
 
 	port			= str(swrawinput_array[2])
 	vlan			= str(swrawinput_array[0])
-	# Has the dictionary key been initialized before?
-        if port not in dict_switches:
-                dict_switches[switchname][port]		= defaultdict()
-                dict_switches[switchname][port]["mac"]	= str(mac)
-                dict_switches[switchname][port]["vlan"]	= str(vlan)
-		try:
-			dict_switches[switchname][port]["ipv4"]		= dict_mac2ip[str(mac)]
-			dict_switches[switchname][port]["hostname"]	= socket.gethostbyaddr(dict_switches[switchname][port]["ipv4"])[0]
-		except KeyError:
-			dict_switches[switchname][port]["ipv4"]		= "Unknown in ARP table"
-                	dict_switches[switchname][port]["hostname"]	= "Unknown"
-                if DEBUGDICT:
-                        print '-' * 80
-                        print "Dictionary has been initialized"
-                        print '-' * 80
-                        pprint.pprint(dict_switches)
-                        print '-' * 80
-			pprint.pprint(swrawinput_array[2])
+
+        if switchname not in dict_switches:
+		dict_switches[switchname] = defaultdict()
+
+        if port not in dict_switches[switchname]:
+		#
+		# Add the dictionary for this port
+		#
+		dict_switches[switchname][port]		= defaultdict()
+		dict_switches[switchname][port]["mac"]	= str(mac)
+		dict_switches[switchname][port]["vlan"] = [str(vlan)]
+	else:
+		#
+		# In this case the port already has been defined
+		#
+		if vlan not in dict_switches[switchname][port]["vlan"]:
+			dict_switches[switchname][port]["vlan"].append(str(vlan))
+			print line
+			print vlan
+		
+	try:
+		dict_switches[switchname][port]["ipv4"]		= dict_mac2ip[str(mac)]
+		#dict_switches[switchname][port]["hostname"]	= ip_to_hostname(dict_switches[switchname][port]["ipv4"])[0]
+	except KeyError:
+		dict_switches[switchname][port]["ipv4"]		= "Unknown in ARP table"
+		#dict_switches[switchname][port]["hostname"]	= "Unknown"
+	if DEBUGDICT:
+		print '-' * 80
+		print "Dictionary has been initialized"
+		print '-' * 80
+		pprint.pprint(dict_switches)
+		print '-' * 80
+		pprint.pprint(swrawinput_array[2])
 
 	
 # Sort the key on numerical values if possible
