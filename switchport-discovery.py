@@ -36,8 +36,19 @@ dict_switches   = {}
 dict_mac2ip	= {}
 DEBUG           = False
 DEBUGDICT       = False
-DEBUGNOHOST	= True
+DEBUGNOHOST	= False
 DEBUGSLOWDOWN	= False
+DEBUGVMWARE	= False
+DEBUGUPLINKS	= False
+DEBUGNOTINARP	= False
+vmware		= "00:50:56"	# We focus on Psyhical Addresses, filter VMware
+vmware_counter  = 0		# Count the number of VMware addresses encountered 
+#
+# TO IMPROVE: Filter uplink ports ( static configured at the moment )
+#
+uplinks		= ['Po110','Po1', 'Gi1/0/48']
+uplink_counter  = 0		# Count the number of MAC addresses related to uplinks
+notinarp_count  = 0		# Count the number of MAC addresses without IPv4 in the routing tables
 
 # Requires input from expect output which reads switch mac tables:
 # cat arista-gsw10wgc | awk '{print $1,$2,$4}'
@@ -74,8 +85,6 @@ def ip_to_hostname(ip):
 		return socket.gethostbyaddr(ip)[0]
 	except socket.herror:
 # All IPv4 without hostnames should be addressed by ICT Network
-		if DEBUGNOHOST:
-			print ip
 		return None,None,None
 
 if DEBUG:
@@ -97,8 +106,16 @@ for line in input:
 
 	# normalize MAC address input to IEEE EUI (Extended Unique Identifier)
 	mac			= str(EUI(str(swrawinput_array[1]))).replace("-",':')
+	if vmware in mac:
+		vmware_counter += 1
+		continue
 
 	port			= str(swrawinput_array[2])
+
+	if [p for p in uplinks if port in p]:
+		uplink_counter += 1
+		continue	
+
 	vlan			= str(swrawinput_array[0])
 
         if switchname not in dict_switches:
@@ -117,6 +134,7 @@ for line in input:
 		#
 		if vlan not in dict_switches[switchname][port]["vlan"]:
 			dict_switches[switchname][port]["vlan"].append(str(vlan))
+		if mac not in dict_switches[switchname][port]["mac"]:
 			dict_switches[switchname][port]["mac"].append(str(mac))
 		
 	#
@@ -126,13 +144,13 @@ for line in input:
 		dict_switches[switchname][port]["ipv4"]		= dict_mac2ip[str(mac)]
 		dict_switches[switchname][port]["hostname"]	= []
 		for ip in dict_switches[switchname][port]["ipv4"]:
-			print ""
-			print switchname
-			print port
-			print ip
 			if DEBUGSLOWDOWN:
 				time.sleep(0.1)
 			dict_switches[switchname][port]["hostname"].append(ip_to_hostname(ip))
+			if DEBUGNOHOST:
+				if dict_switches[switchname][port]["hostname"][0][0] is None:
+					print("Switch=%s Port=%s Problem with IPv4=%s" % (switchname,port,ip))
+
 
 	#
 	# If the ipv4 address is not available in the mac2ip dict define as Unknown
@@ -140,6 +158,7 @@ for line in input:
 	except KeyError:
 		dict_switches[switchname][port]["ipv4"]		= "Unknown in ARP table"
 		dict_switches[switchname][port]["hostname"]	= "Unknown"
+		notinarp_count += 1
 
 	if DEBUGDICT:
 		print '-' * 80
@@ -149,5 +168,13 @@ for line in input:
 		print '-' * 80
 		pprint.pprint(swrawinput_array[2])
 
+if DEBUGVMWARE:
+	print("DEBUG NUMBER OF VMWARE ADDRESSES=%i" % (vmware_counter))
+
+if DEBUGUPLINKS:
+	print("DEBUG NUMBER OF UPLINK MAC ADDRESSES=%i" % (uplink_counter))
+
+if DEBUGNOTINARP:
+	print("DEBUG NUMBER NOT IN ROUTING ARP TABLE=%i" % (notinarp_count))
 	
 json.dump(dict_switches, file('switches_json.txt','w'))
