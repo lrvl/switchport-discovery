@@ -19,6 +19,6 @@ Switch port Discovery : Complement port information with IP,VLAN and HOSTNAME in
 - [X] Match   IPv4 to MAC address
 - [X] Resolve IPv4 to Hostname
 - [X] Include VLAN information
-- [ ] Output to JSON format
+- [X] Output to JSON format
 - [ ] Output to CSV  format ( for Excel reports in SharePoint )
 
