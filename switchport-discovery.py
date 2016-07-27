@@ -22,6 +22,7 @@
 # Description   Parse switch mac tables in order to add IPv4 and hostnames
 #               Compatible with Cisco, Arista and DLink
 #
+import time
 import pprint
 import sys
 import re
@@ -35,6 +36,8 @@ dict_switches   = {}
 dict_mac2ip	= {}
 DEBUG           = False
 DEBUGDICT       = False
+DEBUGNOHOST	= True
+DEBUGSLOWDOWN	= False
 
 # Requires input from expect output which reads switch mac tables:
 # cat arista-gsw10wgc | awk '{print $1,$2,$4}'
@@ -70,6 +73,9 @@ def ip_to_hostname(ip):
 	try:
 		return socket.gethostbyaddr(ip)[0]
 	except socket.herror:
+# All IPv4 without hostnames should be addressed by ICT Network
+		if DEBUGNOHOST:
+			print ip
 		return None,None,None
 
 if DEBUG:
@@ -87,7 +93,6 @@ if len(sys.argv) > 1:
 input = sys.stdin
 for line in input:
         line			= line.strip()
-	print line
         swrawinput_array	= line.split(' ',-1)
 
 	# normalize MAC address input to IEEE EUI (Extended Unique Identifier)
@@ -104,7 +109,7 @@ for line in input:
 		# Add the dictionary for this port
 		#
 		dict_switches[switchname][port]		= defaultdict()
-		dict_switches[switchname][port]["mac"]	= str(mac)
+		dict_switches[switchname][port]["mac"]	= [str(mac)]
 		dict_switches[switchname][port]["vlan"] = [str(vlan)]
 	else:
 		#
@@ -112,19 +117,30 @@ for line in input:
 		#
 		if vlan not in dict_switches[switchname][port]["vlan"]:
 			dict_switches[switchname][port]["vlan"].append(str(vlan))
-			print line
-			print vlan
+			dict_switches[switchname][port]["mac"].append(str(mac))
 		
+	#
+	# Assign ipv4 using the mac2ip dictionary
+	#
 	try:
 		dict_switches[switchname][port]["ipv4"]		= dict_mac2ip[str(mac)]
-		dict_switches[switchname][port]["hostname"] = []
+		dict_switches[switchname][port]["hostname"]	= []
 		for ip in dict_switches[switchname][port]["ipv4"]:
+			print ""
+			print switchname
+			print port
 			print ip
+			if DEBUGSLOWDOWN:
+				time.sleep(0.1)
 			dict_switches[switchname][port]["hostname"].append(ip_to_hostname(ip))
 
+	#
+	# If the ipv4 address is not available in the mac2ip dict define as Unknown
+	#
 	except KeyError:
 		dict_switches[switchname][port]["ipv4"]		= "Unknown in ARP table"
-		#dict_switches[switchname][port]["hostname"]	= "Unknown"
+		dict_switches[switchname][port]["hostname"]	= "Unknown"
+
 	if DEBUGDICT:
 		print '-' * 80
 		print "Dictionary has been initialized"
@@ -134,21 +150,4 @@ for line in input:
 		pprint.pprint(swrawinput_array[2])
 
 	
-# Sort the key on numerical values if possible
-def get_key(key):
-        try:
-                return int(key)
-        except ValueError:
-                return key
-
-
-for key,value in dict_switches.items():
-        sys.stdout.write(key)
-        for k2,v2 in sorted(value.items(), key=lambda t: get_key(t[0])):
-                sys.stdout.write(',')
-                # The output is using GB
-                sys.stdout.write(str(v2))
-        sys.stdout.write("\n")
-
-print " "
 json.dump(dict_switches, file('switches_json.txt','w'))

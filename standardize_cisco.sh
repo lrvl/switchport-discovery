@@ -1,2 +1,8 @@
-cat cisco-gsw03hk8 | awk '{print $1,$2,$4}' | grep '\.' | ./switchport-discovery.py cisco-gsw03hk8
-more switches_json.txt
+INPUTPATH="/root/network-discovery/var"
+
+for i in $(ls $INPUTPATH/cisco-*) 
+do
+	echo $i;
+	cat $i | ./switchport-discovery.py $i
+done
+#more switches_json.txt
