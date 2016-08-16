@@ -59,9 +59,9 @@ sed -i '/Gi1\/0\/48/ d' "$OUTPUT"/cisco-gsw1hr09
 sed -i '/Gi1\/0\/48/ d' "$OUTPUT"/cisco-gsw1hr10
 sed -i '/Gi1\/0\/48/ d' "$OUTPUT"/cisco-gsw1hr11
 sed -i '/Gi1\/0\/48/ d' "$OUTPUT"/cisco-gsw1hr12
-cp "$OUTPUT"/cisco-gsw1hr13 "$OUTPUT"/tmp-gsw1hr13
-egrep -e 'Gi1\/0\/40' -e 'Gi1\/0\/41' -e 'Gi1\/0\/42' -e 'Gi1\/0\/43' -e 'Gi1\/0\/44' "$OUTPUT"/tmp-gsw1hr13 >"$OUTPUT"/cisco-gsw1hr13
-/bin/rm "$OUTPUT"/tmp-gsw1hr13
+sed -i '/Gi1\/0\/10/ d' "$OUTPUT"/cisco-gsw1hr13
+sed -i '/Gi1\/0\/48/ d' "$OUTPUT"/cisco-gsw1hr13
+sed -i '/Gi1\/0\/[1-9]/ d' "$OUTPUT"/cisco-gsw1hr13
 sed -i '/Gi1\/0\/48/ d' "$OUTPUT"/cisco-gsw2hr08
 sed -i '/Gi1\/0\/48/ d' "$OUTPUT"/cisco-gsw2hr09
 sed -i '/Gi1\/0\/48/ d' "$OUTPUT"/cisco-gsw2hr10

@@ -30,7 +30,7 @@ switches=( dlink cisco 3com arista )
 for switch in "${switches[@]}"
 do
   echo "$switch"
-  while [ $(./mac-switches-data-cleanuplink.sh 5 "$switch") != "MACTOTAL=0" ]; do
+  while [ $(./mac-switches-data-cleanuplink.sh 10 "$switch") != "MACTOTAL=0" ]; do
   	echo "Another run for $switch"
   done
 done
