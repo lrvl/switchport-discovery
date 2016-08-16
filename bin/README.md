@@ -1,6 +1,6 @@
 # Sequence of operation
 
-All manual step descripted here are executed at once using the RUNALL.sh script
+All manual steps described here are executed at once using the RUNALL.sh script
 
 ## 1. Cleanup output of previous run
 
@@ -22,7 +22,7 @@ This step is time sensitive. Routing information can expire and has to obtained 
 
 * SCRIPT: "arp-routing-data.sh"
 * USES  : fortigate and arista expect scripts
-* OUTPUT: "var/complete.arp-ip"
+* OUTPUT: "var/arp-ip-<switchname>" and combined into one file: "var/complete.arp-ip" 
 
 ## 4. Retreive MAC information from all datacenter switches
 
