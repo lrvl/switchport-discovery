@@ -23,8 +23,7 @@
 #
 
 
-commands=('cleanup-var.sh' 'arp-activate.sh' 'mac-switches-data.sh')
-#commands=('cleanup-var.sh' 'arp-activate.sh' 'mac-switches-data.sh' 'mac-switches-data-stripuplinks.sh')
+commands=('cleanup-var.sh' 'arp-activate.sh' 'mac-switches-data.sh' 'mac-switches-data-stripuplinks.sh')
 
 date
 for command in ${commands[@]}
