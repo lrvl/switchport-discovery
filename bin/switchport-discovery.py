@@ -38,8 +38,8 @@ DEBUG           = False
 DEBUGDICT       = False
 DEBUGNOHOST	= False
 DEBUGSLOWDOWN	= False
-DEBUGVMWARE	= False
-DEBUGUPLINKS	= False
+DEBUGVMWARE	= True
+DEBUGUPLINKS	= True
 DEBUGNOTINARP	= False
 vmware		= "00:50:56"	# We focus on Psyhical Addresses, filter VMware
 vmware_counter  = 0		# Count the number of VMware addresses encountered 
@@ -77,8 +77,8 @@ def get_arp_table():
 
 get_arp_table()
 
-#pprint.pprint(dict_mac2ip)
-#sys.exit()
+pprint.pprint(dict_mac2ip)
+sys.exit()
 
 def ip_to_hostname(ip):
 	try:
