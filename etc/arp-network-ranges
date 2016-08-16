@@ -1,0 +1,12 @@
+#
+# File type:	configuration, input
+# Used by  :    /bin/arp-activate.sh
+# Purpose  :	Define which networks need scanning using zmap(1)
+#
+10.0.0.0/16
+10.1.0.0/16
+10.2.0.0/16
+10.7.0.0/16
+136.231.0.0/16
+145.9.0.0/16
+192.87.35.0/24
