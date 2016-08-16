@@ -1,5 +1,7 @@
 # Sequence of operation
 
+All manual step descripted here are executed at once using the RUNALL.sh script
+
 ## 1. Cleanup output of previous run
 
 * SCRIPT: "cleanup-var.sh"
