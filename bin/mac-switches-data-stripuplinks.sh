@@ -29,7 +29,7 @@ sed -i  '/Gigabit/ d' "$OUTPUT"/3com-fsw04wgc
 sed -i  '/Gigabit/ d' "$OUTPUT"/3com-fsw05wgc
 sed -i  '/Gigabit/ d' "$OUTPUT"/3com-fsw05wgn
 #
-sed -i -e '/Et1/ d' -e '/Et2/ d' -e '/Et3/ d' -e '/Et5/ d' -e '/Et6/ d' -e '/Et8/ d' -e '/Et9/ d' -e '/Et13/ d' -e '/Et14/ d' -e '/Et17/ d' -e '/Et51/ d' -e '/Po110/ d' -e '/Po121/ d' "$OUTPUT"/arista-gsw10wgc
+sed -i -e '/Et1$/ d' -e '/Et2$/ d' -e '/Et3$/ d' -e '/Et5$/ d' -e '/Et6$/ d' -e '/Et8$/ d' -e '/Et9$/ d' -e '/Et13/ d' -e '/Et14/ d' -e '/Et17/ d' -e '/Et51/ d' -e '/Po110/ d' -e '/Po121/ d' "$OUTPUT"/arista-gsw10wgc
 sed -i '/Po111/ d' "$OUTPUT"/arista-gsw11wgc
 sed -i '/Po112/ d' "$OUTPUT"/arista-gsw13wgn
 sed -i -e '/Et22/ d' -e '/Et23/ d' -e '/Et24/ d' "$OUTPUT"/arista-tsw01sto
