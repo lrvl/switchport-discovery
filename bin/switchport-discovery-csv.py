@@ -36,7 +36,7 @@ def normalize_mac(macraw):
 		return macrawlookup[macraw]
 
 def grep(string):
-	path = '/root/network-discovery/var/switches/*'
+	path = '/root/switchport-discovery/var/switches/*'
 	files = glob.glob(path)
 	onswitch = []
 	for name in files:

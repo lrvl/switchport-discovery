@@ -23,11 +23,13 @@
 #
 
 
-commands=('cleanup-var.sh' 'arp-activate.sh' 'arp-routing-data.sh' 'mac-switches-data.sh' 'mac-switches-data-stripuplinks.sh')
+commands=('cleanup-var.sh' 'arp-activate.sh' 'mac-switches-data.sh' 'mac-switches-data-stripuplinks.sh')
 
+date
 for command in ${commands[@]}
 do
+  printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
   echo "Running $command"
   time $(./$command)
-  printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
 done
+date

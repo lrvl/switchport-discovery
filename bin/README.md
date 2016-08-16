@@ -41,7 +41,7 @@ This step is time sensitive. Routing information can expire and has to obtained 
 * CALL  : 
 
 ```bash
-echo "DEVICE;IPv4;MAC;SWITCH;VLAN;PORT;SWITCH;VLAN;PORT;SWITCH;VLAN;PORT;SWITCH;VLAN;PORT" > ~/switchport-discovery/var/switchport-discovery.csv ; sort -u ~/switchport-discovery/var/complete.arp-ip | ./try.py | grep -Ev "[dl][0-9]{5}\.directory.intra" | grep -Ev "[dl][0-9]{5}\.deltares.nl" | grep -v "^rtr_" | grep -v "xtr.deltares.nl" | grep -v "^wag" | grep -v "^[gp]sw" | grep -v "^vrrp" | grep -v "No Reverse" >> ~/switchport-discovery/var/switchport-discovery.csv ; scp ~/switchport-discovery/var/switchport-discovery.csv logch_l@h6:~/
+echo "DEVICE;IPv4;MAC;SWITCH;VLAN;PORT;SWITCH;VLAN;PORT;SWITCH;VLAN;PORT;SWITCH;VLAN;PORT" > ~/switchport-discovery/var/switchport-discovery.csv ; sort -u ~/switchport-discovery/var/complete.arp-ip | ./switchport-discovery-csv.py | grep -Ev "[dl][0-9]{5}\.directory.intra" | grep -Ev "[dl][0-9]{5}\.deltares.nl" | grep -v "^rtr_" | grep -v "xtr.deltares.nl" | grep -v "^wag" | grep -v "^[gp]sw" | grep -v "^vrrp" | grep -v "No Reverse" >> ~/switchport-discovery/var/switchport-discovery.csv ; scp ~/switchport-discovery/var/switchport-discovery.csv logch_l@h6:~/
 ```
 
 * OUTPUT: "var/switchport-discovery.csv"
